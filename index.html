@@ -133,9 +133,13 @@
                 <span class="label-tag">Team Name</span>
                 <span id="lblTeamName" class="val-text">-</span>
               </div>
-              <div class="col-6">
+              <div class="col-3">
                 <span class="label-tag">Age Group</span>
                 <span id="lblAge" class="val-text">-</span>
+              </div>
+              <div class="col-3">
+                <span class="label-tag">Controller</span>
+                <span id="lblController" class="val-text">-</span>
               </div>
               <div class="col-6">
                 <span class="label-tag">Institution</span>
@@ -178,12 +182,12 @@
     let globalTeamsData = [];
     let selectedTeamObj = null;
 
-    // 🔥 เรียกทำงานอัตโนมัติเมื่อรีเฟรชหน้าเว็บ เพื่อดึงค่าเดิมกลับมาแสดงผล
+    // เรียกทำงานอัตโนมัติเมื่อรีเฟรชหน้าเว็บ เพื่อดึงค่าเดิมกลับมาแสดงผลค้างไว้
     document.addEventListener('DOMContentLoaded', () => {
       const savedAge = localStorage.getItem('wro_ageGroup');
       if (savedAge) {
         document.getElementById('ageGroup').value = savedAge;
-        onAgeGroupChange(true); // ส่งธง true เพื่อบอกว่ากำลังฟื้นฟูค่าเดิม
+        onAgeGroupChange(true); 
       }
     });
 
@@ -202,10 +206,8 @@
       const ageGroup = document.getElementById('ageGroup').value;
       if (!ageGroup) return;
 
-      // บันทึกค่า Age Group ลงเบราว์เซอร์
       localStorage.setItem('wro_ageGroup', ageGroup);
 
-      // ล้างหน้าจอบางส่วนระหว่างโหลดข้อมูลใหม่ โดยไม่รบกวน Dropdown ตัวหลัก
       document.getElementById('teamId').innerHTML = '<option value="">เลือก ID...</option>';
       document.getElementById('teamId').disabled = true;
       document.getElementById('imageInput').value = "";
@@ -223,7 +225,6 @@
         groups.forEach(g => { groupSelect.innerHTML += `<option value="${g}">${g}</option>`; });
         groupSelect.disabled = false;
 
-        // 🔥 ดึงค่า Group เดิมกลับมาเลือกให้ หากมีประวัติบันทึกไว้
         const savedGroup = localStorage.getItem('wro_group');
         if (savedGroup && groups.includes(savedGroup)) {
           groupSelect.value = savedGroup;
@@ -238,7 +239,6 @@
       const selectedGroup = document.getElementById('group').value;
       if (!selectedGroup) return;
 
-      // บันทึกค่า Group ลงเบราว์เซอร์
       localStorage.setItem('wro_group', selectedGroup);
 
       const teamIdSelect = document.getElementById('teamId');
@@ -276,6 +276,8 @@
         document.getElementById('lblAge').innerText = document.getElementById('ageGroup').value;
         document.getElementById('lblTeamName').innerText = selectedTeamObj.teamName;
         document.getElementById('lblInst').innerText = selectedTeamObj.institution;
+        // 🔥 นำข้อมูล Controller ที่ดึงมาแสดงผลในหน้าเว็บ
+        document.getElementById('lblController').innerText = selectedTeamObj.controller || '-';
         
         const statusEl = document.getElementById('lblStatus');
         const imageInput = document.getElementById('imageInput');
@@ -284,7 +286,6 @@
 
         if (selectedTeamObj.checked) {
           let statusHtml = '<span class="badge bg-success fs-6">✔️ ตรวจแล้ว</span>';
-          
           if (selectedTeamObj.imageUrl) {
             statusHtml += `<br><a href="${selectedTeamObj.imageUrl}" target="_blank" class="btn btn-primary text-white btn-review-img">👁️ Preview</a>`;
           }
@@ -293,10 +294,8 @@
           imageInput.disabled = true;
           btnPass.disabled = true;
           btnFail.disabled = true;
-          
         } else {
           statusEl.innerHTML = '<span class="badge bg-secondary fs-6">ยังไม่ได้ตรวจสอบ</span>';
-          
           imageInput.disabled = false;
           btnPass.disabled = false;
           btnFail.disabled = false;
@@ -315,6 +314,7 @@
         teamId: selectedTeamObj.teamId,
         teamName: selectedTeamObj.teamName,
         institution: selectedTeamObj.institution,
+        controller: selectedTeamObj.controller || "", // 🔥 เพิ่มการแนบ Controller ไปยัง Backend
         status: status,
         imageB64: ""
       };
@@ -337,8 +337,7 @@
       callBackend('saveData', payload, function() {
         Swal.fire({ icon: 'success', title: 'สำเร็จ', text: 'บันทึกเรียบร้อยแล้ว', timer: 1500, showConfirmButton: false })
         .then(() => {
-          // 🔥 แทนการ Reset ฟอร์มทั้งหมด ให้สั่งโหลดข้อมูลใหม่โดยคงค่าเดิมไว้ เพื่อให้ List อัปเดตเครื่องหมายติ๊กถูกทันที
-          onAgeGroupChange(true);
+          onAgeGroupChange(true); // บันทึกเสร็จแล้วดึงข้อมูลใหม่มาทับทันทีโดยไม่ล้าง Dropdown
         });
       });
     }
