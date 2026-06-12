@@ -135,10 +135,15 @@
                 <span class="label-tag">Age Group</span>
                 <span id="lblAge" class="val-text">-</span>
               </div>
-              <div class="col-12">
+              <div class="col-6">
                 <span class="label-tag">Institution</span>
                 <span id="lblInst" class="val-text">-</span>
               </div>
+              <div class="col-6">
+                <span class="label-tag">Review Status</span>
+                <span id="lblStatus" class="val-text">-</span>
+              </div>
+            </div>
             </div>
           </div>
         </div>
@@ -203,19 +208,27 @@
     function onGroupChange() {
       const selectedGroup = document.getElementById('group').value;
       const teamIdSelect = document.getElementById('teamId');
+      const filteredTeams = globalTeamsData.filter(t => t.group.replace(/\d+/g, '').trim() === selectedGroup);
       
-      // 1. กรองทีมตามกลุ่มที่เลือก
-      let filteredTeams = globalTeamsData.filter(t => t.group.replace(/\d+/g, '').trim() === selectedGroup);
-      
-      // 🔥 2. เพิ่มการเรียงลำดับ Team ID จากน้อยไปมาก (รองรับทั้งข้อความและตัวเลขแบบ Natural Sort)
       filteredTeams.sort((a, b) => {
         return a.teamId.localeCompare(b.teamId, undefined, { numeric: true, sensitivity: 'base' });
       });
       
-      // 3. นำข้อมูลที่เรียงแล้วไปใส่ใน Dropdown
       teamIdSelect.innerHTML = '<option value="" selected disabled>ID...</option>';
+      
       filteredTeams.forEach(t => { 
-        if(t.teamId) teamIdSelect.innerHTML += `<option value="${t.teamId}">${t.teamId}</option>`; 
+        if(t.teamId) {
+          let displayText = t.teamId;
+          let styleColor = "";
+          
+          // 🔥 แสดงสัญลักษณ์ ✔️ และเปลี่ยนเป็นสีเขียวทันทีหากทีมนี้ถูกตรวจแล้ว (ไม่แยกผ่าน/ไม่ผ่าน)
+          if (t.checked) {
+            displayText += " ✔️ (ตรวจแล้ว)";
+            styleColor = 'style="color: #2e7d32; font-weight: bold;"'; 
+          }
+          
+          teamIdSelect.innerHTML += `<option value="${t.teamId}" ${styleColor}>${displayText}</option>`; 
+        } 
       });
       
       teamIdSelect.disabled = false;
@@ -230,6 +243,15 @@
         document.getElementById('lblAge').innerText = document.getElementById('ageGroup').value;
         document.getElementById('lblTeamName').innerText = selectedTeamObj.teamName;
         document.getElementById('lblInst').innerText = selectedTeamObj.institution;
+        
+        // 🔥 ปรับการแสดงผล Badge สถานะให้เป็นกลาง
+        const statusEl = document.getElementById('lblStatus');
+        if (selectedTeamObj.checked) {
+          statusEl.innerHTML = '<span class="badge bg-success fs-6">✔️ ตรวจสอบแล้ว</span>';
+        } else {
+          statusEl.innerHTML = '<span class="badge bg-secondary fs-6">ยังไม่ได้ตรวจสอบ</span>';
+        }
+        
         document.getElementById('summarySection').classList.remove('d-none');
         document.getElementById('step2Card').classList.remove('d-none');
       }
