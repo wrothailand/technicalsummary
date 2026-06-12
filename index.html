@@ -81,6 +81,7 @@
 
     .label-tag { font-size: 0.8rem; color: #64748b; margin-bottom: 2px; display: block; }
     .val-text { font-weight: 600; color: #1e293b; display: block; font-size: 1.1rem; }
+    .btn-review-img { font-size: 0.8rem; padding: 4px 10px; border-radius: 8px; font-weight: 600; margin-top: 6px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;}
   </style>
 </head>
 <body>
@@ -144,7 +145,6 @@
                 <span id="lblStatus" class="val-text">-</span>
               </div>
             </div>
-            </div>
           </div>
         </div>
 
@@ -173,7 +173,7 @@
   </div>
 
   <script>
-    const GOOGLE_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxiyKLpzSwCPrQ_Qy9MsYgp7HssPIfw7xRk5p37oOGTIq8ST0vN4RGzRj6m6oGxc_QPWQ/exec"; // วาง URL Web App ของคุณที่นี่
+    const GOOGLE_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxiyKLpzSwCPrQ_Qy9MsYgp7HssPIfw7xRk5p37oOGTIq8ST0vN4RGzRj6m6oGxc_QPWQ/exec"; 
     let globalTeamsData = [];
     let selectedTeamObj = null;
 
@@ -204,7 +204,6 @@
       });
     }
 
-    // เมื่อเลือก Group
     function onGroupChange() {
       const selectedGroup = document.getElementById('group').value;
       const teamIdSelect = document.getElementById('teamId');
@@ -221,7 +220,6 @@
           let displayText = t.teamId;
           let styleColor = "";
           
-          // 🔥 แสดงสัญลักษณ์ ✔️ และเปลี่ยนเป็นสีเขียวทันทีหากทีมนี้ถูกตรวจแล้ว (ไม่แยกผ่าน/ไม่ผ่าน)
           if (t.checked) {
             displayText += " ✔️ (ตรวจแล้ว)";
             styleColor = 'style="color: #2e7d32; font-weight: bold;"'; 
@@ -244,10 +242,15 @@
         document.getElementById('lblTeamName').innerText = selectedTeamObj.teamName;
         document.getElementById('lblInst').innerText = selectedTeamObj.institution;
         
-        // 🔥 ปรับการแสดงผล Badge สถานะให้เป็นกลาง
         const statusEl = document.getElementById('lblStatus');
         if (selectedTeamObj.checked) {
-          statusEl.innerHTML = '<span class="badge bg-success fs-6">✔️ ตรวจสอบแล้ว</span>';
+          let statusHtml = '<span class="badge bg-success fs-6">✔️ ตรวจสอบแล้ว</span>';
+          
+          // 🔥 ตรวจสอบว่าถ้าทีมนี้เคยบันทึกรูปไว้ ให้สร้างปุ่มกดดูรูปภาพสำหรับรีวิว
+          if (selectedTeamObj.imageUrl) {
+            statusHtml += `<br><a href="${selectedTeamObj.imageUrl}" target="_blank" class="btn btn-primary text-white btn-review-img">👁️ ดูรูปภาพประวัติ</a>`;
+          }
+          statusEl.innerHTML = statusHtml;
         } else {
           statusEl.innerHTML = '<span class="badge bg-secondary fs-6">ยังไม่ได้ตรวจสอบ</span>';
         }
