@@ -178,6 +178,15 @@
     let globalTeamsData = [];
     let selectedTeamObj = null;
 
+    // 🔥 เรียกทำงานอัตโนมัติเมื่อรีเฟรชหน้าเว็บ เพื่อดึงค่าเดิมกลับมาแสดงผล
+    document.addEventListener('DOMContentLoaded', () => {
+      const savedAge = localStorage.getItem('wro_ageGroup');
+      if (savedAge) {
+        document.getElementById('ageGroup').value = savedAge;
+        onAgeGroupChange(true); // ส่งธง true เพื่อบอกว่ากำลังฟื้นฟูค่าเดิม
+      }
+    });
+
     function callBackend(action, payload, onSuccess) {
       if (typeof google !== 'undefined') {
         if (action === 'getData') google.script.run.withSuccessHandler(onSuccess).getTeamData(payload.ageGroup);
@@ -189,9 +198,20 @@
       }
     }
 
-    function onAgeGroupChange() {
+    function onAgeGroupChange(isRestoring = false) {
       const ageGroup = document.getElementById('ageGroup').value;
-      resetForm(false);
+      if (!ageGroup) return;
+
+      // บันทึกค่า Age Group ลงเบราว์เซอร์
+      localStorage.setItem('wro_ageGroup', ageGroup);
+
+      // ล้างหน้าจอบางส่วนระหว่างโหลดข้อมูลใหม่ โดยไม่รบกวน Dropdown ตัวหลัก
+      document.getElementById('teamId').innerHTML = '<option value="">เลือก ID...</option>';
+      document.getElementById('teamId').disabled = true;
+      document.getElementById('imageInput').value = "";
+      document.getElementById('summarySection').classList.add('d-none');
+      document.getElementById('step2Card').classList.add('d-none');
+      
       Swal.fire({ title: 'Please wait...', didOpen: () => Swal.showLoading(), allowOutsideClick: false });
       
       callBackend('getData', { ageGroup: ageGroup }, function(data) {
@@ -199,14 +219,28 @@
         globalTeamsData = data;
         const groups = [...new Set(data.map(item => item.group.replace(/\d+/g, '').trim()))].filter(g => g !== "");
         const groupSelect = document.getElementById('group');
-        groupSelect.innerHTML = '<option value="" selected disabled>กลุ่ม...</option>';
+        groupSelect.innerHTML = '<option value="">เลือกกลุ่ม...</option>';
         groups.forEach(g => { groupSelect.innerHTML += `<option value="${g}">${g}</option>`; });
         groupSelect.disabled = false;
+
+        // 🔥 ดึงค่า Group เดิมกลับมาเลือกให้ หากมีประวัติบันทึกไว้
+        const savedGroup = localStorage.getItem('wro_group');
+        if (savedGroup && groups.includes(savedGroup)) {
+          groupSelect.value = savedGroup;
+          onGroupChange();
+        } else if (!isRestoring) {
+          localStorage.removeItem('wro_group');
+        }
       });
     }
 
     function onGroupChange() {
       const selectedGroup = document.getElementById('group').value;
+      if (!selectedGroup) return;
+
+      // บันทึกค่า Group ลงเบราว์เซอร์
+      localStorage.setItem('wro_group', selectedGroup);
+
       const teamIdSelect = document.getElementById('teamId');
       const filteredTeams = globalTeamsData.filter(t => t.group.replace(/\d+/g, '').trim() === selectedGroup);
       
@@ -214,7 +248,7 @@
         return a.teamId.localeCompare(b.teamId, undefined, { numeric: true, sensitivity: 'base' });
       });
       
-      teamIdSelect.innerHTML = '<option value="" selected disabled>ID...</option>';
+      teamIdSelect.innerHTML = '<option value="">เลือก ID...</option>';
       
       filteredTeams.forEach(t => { 
         if(t.teamId) {
@@ -256,7 +290,6 @@
           }
           statusEl.innerHTML = statusHtml;
 
-          // 🔥 ล็อกอินพุตอัปโหลดรูปภาพ และปุ่มกดตรวจงาน ไม่ให้แก้ไข
           imageInput.disabled = true;
           btnPass.disabled = true;
           btnFail.disabled = true;
@@ -264,7 +297,6 @@
         } else {
           statusEl.innerHTML = '<span class="badge bg-secondary fs-6">ยังไม่ได้ตรวจสอบ</span>';
           
-          // ปลดล็อกระบบให้ทำงานได้ปกติสำหรับทีมที่ยังไม่เคยตรวจ
           imageInput.disabled = false;
           btnPass.disabled = false;
           btnFail.disabled = false;
@@ -304,19 +336,25 @@
     function sendData(payload) {
       callBackend('saveData', payload, function() {
         Swal.fire({ icon: 'success', title: 'สำเร็จ', text: 'บันทึกเรียบร้อยแล้ว', timer: 1500, showConfirmButton: false })
-        .then(() => resetForm(true));
+        .then(() => {
+          // 🔥 แทนการ Reset ฟอร์มทั้งหมด ให้สั่งโหลดข้อมูลใหม่โดยคงค่าเดิมไว้ เพื่อให้ List อัปเดตเครื่องหมายติ๊กถูกทันที
+          onAgeGroupChange(true);
+        });
       });
     }
 
     function resetForm(all) {
-      if(all) document.getElementById('ageGroup').value = "";
-      document.getElementById('group').innerHTML = '<option value="">กลุ่ม...</option>';
-      document.getElementById('group').disabled = true;
-      document.getElementById('teamId').innerHTML = '<option value="">ID...</option>';
+      if(all) {
+        document.getElementById('ageGroup').value = "";
+        localStorage.removeItem('wro_ageGroup');
+        localStorage.removeItem('wro_group');
+        document.getElementById('group').innerHTML = '<option value="">เลือกกลุ่ม...</option>';
+        document.getElementById('group').disabled = true;
+      }
+      document.getElementById('teamId').innerHTML = '<option value="">เลือก ID...</option>';
       document.getElementById('teamId').disabled = true;
       document.getElementById('imageInput').value = "";
       
-      // ปลดล็อกสถานะปุ่มตอนรีเซ็ตฟอร์มเริ่มต้นใหม่
       document.getElementById('imageInput').disabled = false;
       document.getElementById('btnPass').disabled = false;
       document.getElementById('btnFail').disabled = false;
