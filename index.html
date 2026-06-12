@@ -127,26 +127,27 @@
             </div>
           </div>
 
-         <div id="summarySection" class="summary-box mt-3 d-none">
-  <div class="row g-3">
-    <div class="col-6">
-      <span class="label-tag">Team Name</span>
-      <span id="lblTeamName" class="val-text">-</span>
-    </div>
-    <div class="col-6"> <span class="label-tag">Controller</span>
-      <span id="lblController" class="val-text">-</span>
-    </div>
-    <div class="col-6">
-      <span class="label-tag">Institution</span>
-      <span id="lblInst" class="val-text">-</span>
-    </div>
-    <div class="col-6">
-      <span class="label-tag">Review Status</span>
-      <span id="lblStatus" class="val-text">-</span>
-    </div>
-  </div>
-</div>
-
+          <div id="summarySection" class="summary-box mt-3 d-none">
+            <div class="row g-3">
+              <div class="col-6">
+                <span class="label-tag">Team Name</span>
+                <span id="lblTeamName" class="val-text">-</span>
+              </div>
+              <div class="col-6"> 
+                <span class="label-tag">Controller</span>
+                <span id="lblController" class="val-text">-</span>
+              </div>
+              <div class="col-6">
+                <span class="label-tag">Institution</span>
+                <span id="lblInst" class="val-text">-</span>
+              </div>
+              <div class="col-6">
+                <span class="label-tag">Review Status</span>
+                <span id="lblStatus" class="val-text">-</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <div id="step2Card" class="card p-4 d-none">
           <h5 class="mb-4 d-flex align-items-center">
@@ -177,7 +178,6 @@
     let globalTeamsData = [];
     let selectedTeamObj = null;
 
-    // เรียกทำงานอัตโนมัติเมื่อรีเฟรชหน้าเว็บ เพื่อดึงค่าเดิมกลับมาแสดงผลค้างไว้
     document.addEventListener('DOMContentLoaded', () => {
       const savedAge = localStorage.getItem('wro_ageGroup');
       if (savedAge) {
@@ -268,10 +268,9 @@
       const selectedId = document.getElementById('teamId').value;
       selectedTeamObj = globalTeamsData.find(t => t.teamId === selectedId);
       if (selectedTeamObj) {
-        document.getElementById('lblAge').innerText = document.getElementById('ageGroup').value;
+        // 🔥 แก้ไข: นำคำสั่งดึงค่าใส่ lblAge ที่ถูกลบออกไปแล้ว เพื่อป้องกัน Error ค้างหน้าจอ
         document.getElementById('lblTeamName').innerText = selectedTeamObj.teamName;
         document.getElementById('lblInst').innerText = selectedTeamObj.institution;
-        // 🔥 นำข้อมูล Controller ที่ดึงมาแสดงผลในหน้าเว็บ
         document.getElementById('lblController').innerText = selectedTeamObj.controller || '-';
         
         const statusEl = document.getElementById('lblStatus');
@@ -309,7 +308,7 @@
         teamId: selectedTeamObj.teamId,
         teamName: selectedTeamObj.teamName,
         institution: selectedTeamObj.institution,
-        controller: selectedTeamObj.controller || "", // 🔥 เพิ่มการแนบ Controller ไปยัง Backend
+        controller: selectedTeamObj.controller || "", 
         status: status,
         imageB64: ""
       };
@@ -332,7 +331,7 @@
       callBackend('saveData', payload, function() {
         Swal.fire({ icon: 'success', title: 'สำเร็จ', text: 'บันทึกเรียบร้อยแล้ว', timer: 1500, showConfirmButton: false })
         .then(() => {
-          onAgeGroupChange(true); // บันทึกเสร็จแล้วดึงข้อมูลใหม่มาทับทันทีโดยไม่ล้าง Dropdown
+          onAgeGroupChange(true); 
         });
       });
     }
