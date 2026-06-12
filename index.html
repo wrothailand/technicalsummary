@@ -192,7 +192,7 @@
     function onAgeGroupChange() {
       const ageGroup = document.getElementById('ageGroup').value;
       resetForm(false);
-      Swal.fire({ title: 'Plaese wait...', didOpen: () => Swal.showLoading(), allowOutsideClick: false });
+      Swal.fire({ title: 'Please wait...', didOpen: () => Swal.showLoading(), allowOutsideClick: false });
       
       callBackend('getData', { ageGroup: ageGroup }, function(data) {
         Swal.close();
@@ -222,7 +222,7 @@
           let styleColor = "";
           
           if (t.checked) {
-            displayText += " ✔️ ";
+            displayText += " ✔️ (ตรวจแล้ว)";
             styleColor = 'style="color: #2e7d32; font-weight: bold;"'; 
           }
           
@@ -303,7 +303,7 @@
 
     function sendData(payload) {
       callBackend('saveData', payload, function() {
-        Swal.fire({ icon: 'success', title: 'สำเร็จ', text: 'บันทึกข้อมูลเรียบร้อยแล้ว', timer: 1500, showConfirmButton: false })
+        Swal.fire({ icon: 'success', title: 'สำเร็จ', text: 'บันทึกเรียบร้อยแล้ว', timer: 1500, showConfirmButton: false })
         .then(() => resetForm(true));
       });
     }
@@ -318,4 +318,12 @@
       
       // ปลดล็อกสถานะปุ่มตอนรีเซ็ตฟอร์มเริ่มต้นใหม่
       document.getElementById('imageInput').disabled = false;
-      document.
+      document.getElementById('btnPass').disabled = false;
+      document.getElementById('btnFail').disabled = false;
+
+      document.getElementById('summarySection').classList.add('d-none');
+      document.getElementById('step2Card').classList.add('d-none');
+    }
+  </script>
+</body>
+</html>
