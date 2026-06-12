@@ -78,6 +78,7 @@
     }
 
     .btn-pass:hover, .btn-fail:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+    .btn-pass:disabled, .btn-fail:disabled { background: #cbd5e1; color: #94a3b8; transform: none; box-shadow: none; cursor: not-allowed; }
 
     .label-tag { font-size: 0.8rem; color: #64748b; margin-bottom: 2px; display: block; }
     .val-text { font-weight: 600; color: #1e293b; display: block; font-size: 1.1rem; }
@@ -160,10 +161,10 @@
 
           <div class="row g-3">
             <div class="col-6">
-              <button class="btn btn-pass w-100 fw-bold" onclick="submitForm('PASS')">ผ่าน (PASS)</button>
+              <button id="btnPass" class="btn btn-pass w-100 fw-bold" onclick="submitForm('PASS')">ผ่าน (PASS)</button>
             </div>
             <div class="col-6">
-              <button class="btn btn-fail w-100 fw-bold" onclick="submitForm('FAIL')">ไม่ผ่าน (FAIL)</button>
+              <button id="btnFail" class="btn btn-fail w-100 fw-bold" onclick="submitForm('FAIL')">ไม่ผ่าน (FAIL)</button>
             </div>
           </div>
         </div>
@@ -191,7 +192,7 @@
     function onAgeGroupChange() {
       const ageGroup = document.getElementById('ageGroup').value;
       resetForm(false);
-      Swal.fire({ title: 'Modernglass Loading...', didOpen: () => Swal.showLoading(), allowOutsideClick: false });
+      Swal.fire({ title: 'Plaese wait...', didOpen: () => Swal.showLoading(), allowOutsideClick: false });
       
       callBackend('getData', { ageGroup: ageGroup }, function(data) {
         Swal.close();
@@ -221,7 +222,7 @@
           let styleColor = "";
           
           if (t.checked) {
-            displayText += " ✔️ (ตรวจแล้ว)";
+            displayText += " ✔️ ";
             styleColor = 'style="color: #2e7d32; font-weight: bold;"'; 
           }
           
@@ -243,16 +244,30 @@
         document.getElementById('lblInst').innerText = selectedTeamObj.institution;
         
         const statusEl = document.getElementById('lblStatus');
+        const imageInput = document.getElementById('imageInput');
+        const btnPass = document.getElementById('btnPass');
+        const btnFail = document.getElementById('btnFail');
+
         if (selectedTeamObj.checked) {
-          let statusHtml = '<span class="badge bg-success fs-6">✔️ ตรวจสอบแล้ว</span>';
+          let statusHtml = '<span class="badge bg-success fs-6">✔️ ตรวจแล้ว</span>';
           
-          // 🔥 ตรวจสอบว่าถ้าทีมนี้เคยบันทึกรูปไว้ ให้สร้างปุ่มกดดูรูปภาพสำหรับรีวิว
           if (selectedTeamObj.imageUrl) {
-            statusHtml += `<br><a href="${selectedTeamObj.imageUrl}" target="_blank" class="btn btn-primary text-white btn-review-img">👁️ ดูรูปภาพประวัติ</a>`;
+            statusHtml += `<br><a href="${selectedTeamObj.imageUrl}" target="_blank" class="btn btn-primary text-white btn-review-img">👁️ Preview</a>`;
           }
           statusEl.innerHTML = statusHtml;
+
+          // 🔥 ล็อกอินพุตอัปโหลดรูปภาพ และปุ่มกดตรวจงาน ไม่ให้แก้ไข
+          imageInput.disabled = true;
+          btnPass.disabled = true;
+          btnFail.disabled = true;
+          
         } else {
           statusEl.innerHTML = '<span class="badge bg-secondary fs-6">ยังไม่ได้ตรวจสอบ</span>';
+          
+          // ปลดล็อกระบบให้ทำงานได้ปกติสำหรับทีมที่ยังไม่เคยตรวจ
+          imageInput.disabled = false;
+          btnPass.disabled = false;
+          btnFail.disabled = false;
         }
         
         document.getElementById('summarySection').classList.remove('d-none');
@@ -300,9 +315,7 @@
       document.getElementById('teamId').innerHTML = '<option value="">ID...</option>';
       document.getElementById('teamId').disabled = true;
       document.getElementById('imageInput').value = "";
-      document.getElementById('summarySection').classList.add('d-none');
-      document.getElementById('step2Card').classList.add('d-none');
-    }
-  </script>
-</body>
-</html>
+      
+      // ปลดล็อกสถานะปุ่มตอนรีเซ็ตฟอร์มเริ่มต้นใหม่
+      document.getElementById('imageInput').disabled = false;
+      document.
