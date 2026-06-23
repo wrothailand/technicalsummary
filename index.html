@@ -83,6 +83,18 @@
     .label-tag { font-size: 0.8rem; color: #64748b; margin-bottom: 2px; display: block; }
     .val-text { font-weight: 600; color: #1e293b; display: block; font-size: 1.1rem; }
     .btn-review-img { font-size: 0.8rem; padding: 4px 10px; border-radius: 8px; font-weight: 600; margin-top: 6px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;}
+    
+    /* 🟢 สไตล์เพิ่มเติมสำหรับป้ายแสดงสถานะตัวหนาอ่านง่าย */
+    .status-badge-custom {
+      display: inline-block;
+      width: 100%;
+      padding: 10px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      text-align: center;
+      border-radius: 10px;
+      letter-spacing: 0.5px;
+    }
   </style>
 </head>
 <body>
@@ -144,6 +156,10 @@
               <div class="col-6">
                 <span class="label-tag">Review Status</span>
                 <span id="lblStatus" class="val-text">-</span>
+              </div>
+              <div class="col-12 mt-3 pt-2 border-top">
+                <span class="label-tag mb-1">Technical Status (ผลการตรวจสอบ)</span>
+                <div id="lblTechResult">-</div>
               </div>
             </div>
           </div>
@@ -268,12 +284,12 @@
       const selectedId = document.getElementById('teamId').value;
       selectedTeamObj = globalTeamsData.find(t => t.teamId === selectedId);
       if (selectedTeamObj) {
-        // 🔥 แก้ไข: นำคำสั่งดึงค่าใส่ lblAge ที่ถูกลบออกไปแล้ว เพื่อป้องกัน Error ค้างหน้าจอ
         document.getElementById('lblTeamName').innerText = selectedTeamObj.teamName;
         document.getElementById('lblInst').innerText = selectedTeamObj.institution;
         document.getElementById('lblController').innerText = selectedTeamObj.controller || '-';
         
         const statusEl = document.getElementById('lblStatus');
+        const techResultEl = document.getElementById('lblTechResult'); // 🟢 ลิงก์ช่องแสดงสถานะผลตรวจใหม่
         const imageInput = document.getElementById('imageInput');
         const btnPass = document.getElementById('btnPass');
         const btnFail = document.getElementById('btnFail');
@@ -285,11 +301,21 @@
           }
           statusEl.innerHTML = statusHtml;
 
+          // 🟢 ตรวจสอบสถานะและใส่สีพื้นหลัง (Badge) ให้โดดเด่นมองง่าย
+          if (selectedTeamObj.status === 'PASS') {
+            techResultEl.innerHTML = '<span class="status-badge-custom bg-success text-white">🟢 ผ่านการตรวจสอบ (PASS)</span>';
+          } else if (selectedTeamObj.status === 'FAIL') {
+            techResultEl.innerHTML = '<span class="status-badge-custom bg-danger text-white">🔴 ไม่ผ่านการตรวจสอบ (FAIL)</span>';
+          } else {
+            techResultEl.innerHTML = '<span class="status-badge-custom bg-warning text-dark">⚠️ ตรวจแล้ว แต่ไม่มีข้อมูลสถานะ</span>';
+          }
+
           imageInput.disabled = true;
           btnPass.disabled = true;
           btnFail.disabled = true;
         } else {
           statusEl.innerHTML = '<span class="badge bg-secondary fs-6">ยังไม่ได้ตรวจสอบ</span>';
+          techResultEl.innerHTML = '<span class="text-muted fs-6 italic">⏳ รอการบันทึกผลการตรวจสอบ</span>'; // 🟢 ถ้ายังไม่ตรวจให้แสดงข้อความรอ
           imageInput.disabled = false;
           btnPass.disabled = false;
           btnFail.disabled = false;
