@@ -2,115 +2,135 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>WRO Technical Summary</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     :root {
       --main-blue: #0d47a1;
       --light-blue: #1976d2;
-      --gradient-blue: linear-gradient(135deg, #0d47a1 0%, #1a237e 100%);
-      --glass-bg: rgba(255, 255, 255, 0.9);
+      --gradient-blue: linear-gradient(135deg, #020617 0%, #0f172a 100%);
+      --card-glass: rgba(255, 255, 255, 0.95);
     }
     
     body { 
-      background: #f0f2f5; 
+      background: #f1f5f9; 
       font-family: 'Prompt', 'Inter', sans-serif; 
       color: #334155;
+      min-h: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
+    /* ปรับเป็น Full-Width Edge-to-Edge Header Bar */
     .header-section {
       background: var(--gradient-blue);
       color: white;
-      padding: 40px 0;
-      border-radius: 0 0 40px 40px;
-      box-shadow: 0 10px 30px rgba(13, 71, 161, 0.2);
+      padding: 30px 20px;
+      border-radius: 0;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.15);
+      border-bottom: 3px solid #3b82f6;
     }
 
     .brand-title {
       font-family: 'Inter', sans-serif;
-      font-weight: 700;
+      font-weight: 900;
       letter-spacing: 2px;
       text-transform: uppercase;
     }
 
     .card {
-      background: var(--glass-bg);
-      border: none;
-      border-radius: 20px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-      backdrop-filter: blur(10px);
-      transition: 0.3s;
+      background: var(--card-glass);
+      border: 1px solid #e2e8f0;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+      backdrop-filter: blur(12px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      height: 100%;
     }
 
-    .form-label { font-weight: 600; color: var(--main-blue); margin-bottom: 8px; }
+    .form-label { font-weight: 700; color: #1e3a8a; margin-bottom: 8px; font-size: 0.95rem; }
 
     .form-select, .form-control {
-      border-radius: 12px;
-      padding: 12px;
-      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 14px;
+      border: 1.5px solid #cbd5e1;
+      font-weight: 500;
+      background-color: #ffffff;
     }
 
     .form-select:focus, .form-control:focus {
       border-color: var(--light-blue);
-      box-shadow: 0 0 0 4px rgba(25, 118, 210, 0.1);
+      box-shadow: 0 0 0 4px rgba(25, 118, 210, 0.15);
     }
 
     .summary-box {
-      background: #f8faff;
-      border: 1px solid #e0e7ff;
-      border-radius: 16px;
-      padding: 20px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 24px;
     }
 
     .btn-pass {
-      background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
-      border: none; color: white; border-radius: 15px; padding: 18px;
-      transition: 0.3s;
+      background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+      border: none; color: white; border-radius: 16px; padding: 20px;
+      box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);
+      transition: 0.2s ease-in-out;
     }
 
     .btn-fail {
-      background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
-      border: none; color: white; border-radius: 15px; padding: 18px;
-      transition: 0.3s;
+      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+      border: none; color: white; border-radius: 16px; padding: 20px;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
+      transition: 0.2s ease-in-out;
     }
 
-    .btn-pass:hover, .btn-fail:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-    .btn-pass:disabled, .btn-fail:disabled { background: #cbd5e1; color: #94a3b8; transform: none; box-shadow: none; cursor: not-allowed; }
+    .btn-pass:hover, .btn-fail:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+    .btn-pass:active, .btn-fail:active { transform: translateY(0); }
+    .btn-pass:disabled, .btn-fail:disabled { background: #cbd5e1 !important; color: #94a3b8; transform: none; box-shadow: none; cursor: not-allowed; }
 
-    .label-tag { font-size: 0.8rem; color: #64748b; margin-bottom: 2px; display: block; }
-    .val-text { font-weight: 600; color: #1e293b; display: block; font-size: 1.1rem; }
-    .btn-review-img { font-size: 0.8rem; padding: 4px 10px; border-radius: 8px; font-weight: 600; margin-top: 6px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;}
+    .label-tag { font-size: 0.85rem; font-weight: 600; color: #64748b; margin-bottom: 4px; display: block; text-transform: uppercase; }
+    .val-text { font-weight: 700; color: #0f172a; display: block; font-size: 1.15rem; }
+    .btn-review-img { font-size: 0.85rem; padding: 6px 14px; border-radius: 10px; font-weight: 600; margin-top: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;}
     
-    /* 🟢 สไตล์เพิ่มเติมสำหรับป้ายแสดงสถานะตัวหนาอ่านง่าย */
     .status-badge-custom {
       display: inline-block;
       width: 100%;
-      padding: 10px;
-      font-size: 1.05rem;
-      font-weight: 600;
+      padding: 14px;
+      font-size: 1.1rem;
+      font-weight: 700;
       text-align: center;
-      border-radius: 10px;
+      border-radius: 14px;
       letter-spacing: 0.5px;
+      box-shadow: inset 0 -2px 0 rgba(0,0,0,0.1);
     }
+
+    /* ปรับแต่ง Scrollbar สไตล์เรียบหรู */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
   </style>
 </head>
 <body>
 
-  <div class="header-section text-center mb-5">
-    <h1 class="brand-title h2">Technical Summary Digital Form</h1>
-    <p class="mb-0 opacity-75">World Robot Olympiad 2026</p>
+  <!-- Full-Width Header Block -->
+  <div class="header-section text-center mb-4">
+    <h1 class="brand-title h3 mb-1">Technical Summary Digital Form</h1>
+    <p class="mb-0 opacity-75 font-medium">World Robot Olympiad 2026</p>
   </div>
 
-  <div class="container pb-5">
-    <div class="row justify-content-center">
-      <div class="col-lg-7 col-md-9">
-        
-        <div class="card p-4 mb-4">
-          <h5 class="mb-4 d-flex align-items-center">
-            <span class="badge bg-primary me-2 rounded-pill">1</span> ข้อมูลทีม
+  <!-- Main Grid Area Layout: ขยายกว้างเต็มรูปแบบสไตล์ Dashboard -->
+  <div class="container-fluid px-3 px-sm-4 px-lg-5 pb-5 flex-grow-1">
+    <div class="row g-4 justify-content-center">
+      
+      <!-- ฝั่งซ้าย: ตัวเลือกและข้อมูลทีม -->
+      <div class="col-12 col-xl-7 col-lg-6">
+        <div class="card p-4">
+          <h5 class="mb-4 d-flex align-items-center font-bold text-dark">
+            <span class="badge bg-primary me-2 rounded-pill px-2.5 py-1.5">1</span> ข้อมูลทีมและกลุ่มแข่งขัน
           </h5>
           
           <div class="row">
@@ -139,53 +159,57 @@
             </div>
           </div>
 
+          <!-- กล่องสรุปผลการค้นหาข้อมูลทีม -->
           <div id="summarySection" class="summary-box mt-3 d-none">
-            <div class="row g-3">
-              <div class="col-6">
+            <div class="row g-4">
+              <div class="col-sm-6">
                 <span class="label-tag">Team Name</span>
                 <span id="lblTeamName" class="val-text">-</span>
               </div>
-              <div class="col-6"> 
+              <div class="col-sm-6"> 
                 <span class="label-tag">Controller</span>
                 <span id="lblController" class="val-text">-</span>
               </div>
-              <div class="col-6">
+              <div class="col-sm-6">
                 <span class="label-tag">Institution</span>
                 <span id="lblInst" class="val-text">-</span>
               </div>
-              <div class="col-6">
+              <div class="col-sm-6">
                 <span class="label-tag">Review Status</span>
                 <span id="lblStatus" class="val-text">-</span>
               </div>
-              <div class="col-12 mt-3 pt-2 border-top">
-                <span class="label-tag mb-1">Technical Status (ผลการตรวจสอบ)</span>
+              <div class="col-12 mt-3 pt-3 border-top">
+                <span class="label-tag mb-2">Technical Status (ผลการตรวจสอบในระบบ)</span>
                 <div id="lblTechResult">-</div>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
+      <!-- ฝั่งขวา: แท่นบันทึกคะแนนตรวจสอบ (จะเปิดเคียงข้างกันอย่างลงตัวบนจอใหญ่) -->
+      <div class="col-12 col-xl-5 col-lg-6">
         <div id="step2Card" class="card p-4 d-none">
-          <h5 class="mb-4 d-flex align-items-center">
-            <span class="badge bg-primary me-2 rounded-pill">2</span> Technical Review
+          <h5 class="mb-4 d-flex align-items-center font-bold text-dark">
+            <span class="badge bg-primary me-2 rounded-pill px-2.5 py-1.5">2</span> Technical Review Operation
           </h5>
           
           <div class="mb-4">
-            <label class="form-label">ถ่ายภาพประกอบการตรวจสอบ</label>
+            <label class="form-label">ถ่ายภาพหรือแนบหลักฐานประกอบการตรวจสอบ</label>
             <input type="file" id="imageInput" accept="image/*" capture="environment" class="form-control">
           </div>
 
-          <div class="row g-3">
+          <div class="row g-3 mt-2">
             <div class="col-6">
-              <button id="btnPass" class="btn btn-pass w-100 fw-bold" onclick="submitForm('PASS')">ผ่าน (PASS)</button>
+              <button id="btnPass" class="btn btn-pass w-100 fw-bold h-100 fs-5" onclick="submitForm('PASS')">ผ่าน (PASS)</button>
             </div>
             <div class="col-6">
-              <button id="btnFail" class="btn btn-fail w-100 fw-bold" onclick="submitForm('FAIL')">ไม่ผ่าน (FAIL)</button>
+              <button id="btnFail" class="btn btn-fail w-100 fw-bold h-100 fs-5" onclick="submitForm('FAIL')">ไม่ผ่าน (FAIL)</button>
             </div>
           </div>
         </div>
-
       </div>
+
     </div>
   </div>
 
@@ -268,7 +292,7 @@
           
           if (t.checked) {
             displayText += " ✔️ (ตรวจแล้ว)";
-            styleColor = 'style="color: #2e7d32; font-weight: bold;"'; 
+            styleColor = 'style="color: #16a34a; font-weight: bold;"'; 
           }
           
           teamIdSelect.innerHTML += `<option value="${t.teamId}" ${styleColor}>${displayText}</option>`; 
@@ -289,7 +313,7 @@
         document.getElementById('lblController').innerText = selectedTeamObj.controller || '-';
         
         const statusEl = document.getElementById('lblStatus');
-        const techResultEl = document.getElementById('lblTechResult'); // 🟢 ลิงก์ช่องแสดงสถานะผลตรวจใหม่
+        const techResultEl = document.getElementById('lblTechResult'); 
         const imageInput = document.getElementById('imageInput');
         const btnPass = document.getElementById('btnPass');
         const btnFail = document.getElementById('btnFail');
@@ -301,7 +325,6 @@
           }
           statusEl.innerHTML = statusHtml;
 
-          // 🟢 ตรวจสอบสถานะและใส่สีพื้นหลัง (Badge) ให้โดดเด่นมองง่าย
           if (selectedTeamObj.status === 'PASS') {
             techResultEl.innerHTML = '<span class="status-badge-custom bg-success text-white">🟢 ผ่านการตรวจสอบ (PASS)</span>';
           } else if (selectedTeamObj.status === 'FAIL') {
@@ -315,7 +338,7 @@
           btnFail.disabled = true;
         } else {
           statusEl.innerHTML = '<span class="badge bg-secondary fs-6">ยังไม่ได้ตรวจสอบ</span>';
-          techResultEl.innerHTML = '<span class="text-muted fs-6 italic">⏳ รอการบันทึกผลการตรวจสอบ</span>'; // 🟢 ถ้ายังไม่ตรวจให้แสดงข้อความรอ
+          techResultEl.innerHTML = '<span class="text-muted fs-6 fst-italic">⏳ รอการบันทึกผลการตรวจสอบจากแท่นขวา</span>'; 
           imageInput.disabled = false;
           btnPass.disabled = false;
           btnFail.disabled = false;
